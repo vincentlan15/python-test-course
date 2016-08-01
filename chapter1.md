@@ -287,17 +287,18 @@ hint comes here
 
 *** =sample_code
 ```{python}
-x=5
+sum(range(10))
 
 ```
 
 *** =solution
 ```{python}
-x = 5
+sum( range(10) )
 
 ```
 
 *** =sct
 ```{python}
-test_student_typed("x\s+\=\s+5")
+test_student_typed("sum\s*\(\s*range\s*\(")
+
 ```
