@@ -268,7 +268,7 @@ test_function("numpy.random.randn")
 test_object("x")
 test_function("print")
 ```
---- type:NormalExercise lang:python xp:100 skills:1 key:318c23b2b7
+--- type:NormalExercise lang:python xp:100 skills:1 key:b8b07e515b
 ## Testing test_student_typed
 
 Testing if test_student_typed tolerates regular expression with extra/less space.
