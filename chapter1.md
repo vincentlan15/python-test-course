@@ -5,18 +5,20 @@ attachments :
   slides_link : https://s3.amazonaws.com/assets.datacamp.com/course/teach/slides_example.pdf
 
 --- type:NormalExercise lang:python xp:50 skills:1 key:666730c56f
-## Do Frog A and Frog B come from the same distribution?
+## The np.random module and Bernoulli trials
 
-Now you'll put your `permutation_sample()` function to work. You will use the difference of means as the test statistic. You need to write a function that computes the difference in the mean of two data sets to pass into `permutation_sample()`. Then call `permutation_sample()` to get your samples. Finally, the p-value is the fraction of your samples where the difference in means was less than the observed difference in means, 0.29 N.
-
-The two data sets are stored in the arrays `force_a` and `force_b`.
+You can think of a Bernoulli trial as a flip of a possibly biased coin. Specifically, each coin flip has a probability $p$ of landing heads (success) and probability $1-p$ of landing tails (failure). To make it concrete in our finance example, let $p$ be the probability that a home buyer will pay off the loan (success). In this exercise, you will write a function to perform a Bernoulli trail, `bernoulli_trial(p)`, which returns `True` for a success. To do this, use the `np.random.rand()` function, which returns a random number between zero and one.  Run this function 100,000 times for `p = 0.95` to check to see if you get the number of successes you expect.
 
 *** =instructions
-- Write a function, `diff_of_means(data_1, data_2)`, to compute the difference of the means of two data sets.
-- Compute the value of the difference in mean impact force between the two frogs from the data.
-- Take 10,000 permutaiton samples.
-- Compute the p-value as the fraction of samples with the difference in mean impact force that is greater than the observed value.
-- Print the p-value.
+- Seed the random number generator
+- Write the function `bernoulli_trial(p)`. Within this function:
+    * Choose a random number between zero and one.
+    * If the number you chose is less than `p`, return `True`.
+    * Otherwise, return `False`.
+- Initialize the counter of `True`s, which are Bernoulli trial successes (buyer pays off his or her mortgage), to zero.
+- Write a `for` loop to count the number of successes in 100,000 trials with `p=0.95`.
+- Count the fraction of trials that were successes.
+- Print the result.
 
 *** =hint
 hint comes here
@@ -24,111 +26,76 @@ hint comes here
 *** =pre_exercise_code
 ```{python}
 import numpy as np
-import pandas as pd
-
-# Pull out data
-df = pd.read_csv('https://s3.amazonaws.com/assets.datacamp.com/production/course_1397/datasets/frog_tongue.csv', comment='#')
-
-force_a = df.loc[df['ID']=='II', 'impact force (mN)'].values / 1000
-force_b = df.loc[df['ID']=='IV', 'impact force (mN)'].values / 1000
-
-def ecdf(data):
-    """Compute ECDF for a one-dimensional array of measurements."""
-    x = np.sort(data)
-    y = np.arange(1, len(data) + 1) / len(data)
-    return x, y
-
-def bootstrap_sample_1d(data, func, n_samples):
-    """Take bootstrap samples of array of data."""
-    # Initialize samples
-    samples = np.empty(n_samples)
-
-    # Take samples
-    for i in range(n_samples):
-        samples[i] = func(np.random.choice(data, len(data)))
-
-    return samples
-
-def permutation_sample(data_1, data_2, func, n_samples):
-    """Generate samples for a permutation test."""
-    # Concatenate the data sets together
-    data = np.concatenate((data_1, data_2))
-
-    # Initialize the array containing samples
-    samples = np.empty(n_samples)
-
-    for i in range(n_samples):
-        # Permute the data
-        data_perm = np.random.permutation(data)
-
-        # Partition the permuted data into two data sets
-        data_a = data_perm[:len(data_1)]
-        data_b = data_perm[len(data_1):]
-
-        # Compute the test statistic
-        samples[i] = func(data_a, data_b)
-
-    return samples
 ```
 
 *** =sample_code
 ```{python}
-# Seed random number generator
+# Seed the random number generator
 np.random.seed(42)
 
-def diff_of_means(data_1, data_2):
-    return np.mean(data_1) - np.mean(data_2)
+def bernoulli_trial(p):
+    """Perform Bernoulli trial with success probability p."""
+    # Choose random number between zero and one
+    random_number = np.random.random()
 
-# Compute difference of mean impact force from experiment
-empirical_diff_means = diff_of_means(force_a, force_b)
+    # Check to see if it is less than p and return True, else return False
+    if random_number < p:
+        return True
+    return False
 
-# Draw 10,000 permutation samples
-samples = permutation_sample(force_a, force_b, diff_of_means, 10000)
+# Initialize counter
+n_success = 0
 
-# Compute p-value
-p = np.sum(samples > empirical_diff_means) / len(samples)
+# Perform Bernoulli trials
+for _ in range(100000):
+    n_success += bernoulli_trial(0.95)
 
-# Print the result
-print('p-value =', p)
+# Print fraction of successes
+print('fraction success:', n_success/100000)
+
 ```
 
 *** =solution
 ```{python}
-# Seed random number generator
+# Seed the random number generator
 np.random.seed(42)
 
-def diff_of_means(data_1, data_2):
-    return np.mean(data_1) - np.mean(data_2)
+def bernoulli_trial(p):
+    """Perform Bernoulli trial with success probability p."""
+    # Choose random number between zero and one
+    random_number = np.random.random()
 
-# Compute difference of mean impact force from experiment
-empirical_diff_means = diff_of_means(force_a, force_b)
+    # Check to see if it is less than p and return True, else return False
+    if random_number < p:
+        return True
+    return False
 
-# Draw 10,000 permutation samples
-samples = permutation_sample(force_a, force_b, diff_of_means, 10000)
+# Initialize counter
+n_success = 0
 
-# Compute p-value
-p = np.sum(samples > empirical_diff_means) / len(samples)
+# Perform Bernoulli trials
+for _ in range(100000):
+    n_success += bernoulli_trial(0.95)
 
-# Print the result
-print('p-value =', p)
+# Print fraction of successes
+print('fraction success:', n_success/100000)
 ```
 
 *** =sct
 ```{python}
-test_function_definition("diff_of_means", results=[([3,2],[5,6]),([2,2],[8,5])], wrong_result_msg="Did you define diff_of_means?")
+#test_function_definition("bernoulli_trial", results=[(0.3),(0.5),(0.8)])
 
-test_function("diff_of_means")
-test_object("empirical_diff_means")
+def test_for_iter():
+    msg = "Make sure you iterate over 100,000 trials."
+    test_function("range", incorrect_msg=msg)
+test_for_loop(index=1,
+              for_iter=test_for_iter)
 
-test_function("permutation_sample", do_eval=False)
-test_object("samples", do_eval=False)
-
-test_function("numpy.sum")
-test_object("p")
+test_object("n_success", incorrect_msg="Did you initiate and update `n_success` correctly?")
 
 test_function("print")
 
-success_msg("""The p-value of 0.006 tells you that there is about a 0.6% chance that you would get the difference of means observed in the experiment if frogs were exactly the same. A p-value below 0.01 is typically said to be "statistically significant,", but: warning! warning! warning! You have computed a p-value; it is a number. I encourage you not to distill it to a yes-or-no phrase. p = 0.006 and p = 0.000000006 are both said to be "statistically significant," but they are definitely not the same!""")
+success_msg("The fraction success is close to our expected value of 0.95.")
 ```
 --- type:NormalExercise lang:python xp:100 skills:1 key:4e6305dc0e
 ## Plot the movies yourself
