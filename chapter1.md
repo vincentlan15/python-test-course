@@ -4,7 +4,7 @@ description : Insert the chapter description here
 attachments :
   slides_link : https://s3.amazonaws.com/assets.datacamp.com/course/teach/slides_example.pdf
 
---- type:MultipleChoiceExercise lang:python xp:50 skills:1 key:666730c56f
+--- type:NormalExercise lang:python xp:50 skills:1 key:666730c56f
 ## Do Frog A and Frog B come from the same distribution?
 
 Now you'll put your `permutation_sample()` function to work. You will use the difference of means as the test statistic. You need to write a function that computes the difference in the mean of two data sets to pass into `permutation_sample()`. Then call `permutation_sample()` to get your samples. Finally, the p-value is the fraction of your samples where the difference in means was less than the observed difference in means, 0.29 N.
